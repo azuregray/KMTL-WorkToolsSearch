@@ -1,2 +1,2 @@
 # WorkTools Data Search Model
- Project Provider: Kennametal India
+ Project Provider: Kennametal Shared Services Private Ltd.

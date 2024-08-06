@@ -6,8 +6,8 @@ import pandas as pd
 class ExcelApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Kennametal")
-        self.root.geometry("500x700")
+        self.root.title("Kennametal Data Search")
+        self.root.geometry("600x800")
         self.root.resizable(False, False)
 
         try:
@@ -25,28 +25,28 @@ class ExcelApp:
         self.create_widgets()
 
     def create_widgets(self):
-        title_label = tk.Label(self.root, text="Kennametal Data Search", font=("Helvetica", 16, "bold"))
-        title_label.pack(pady=10)
+        title_label = tk.Label(self.root, text="Kennametal Data Search", font=("Helvetica", 18, "bold"), fg="#333333")
+        title_label.pack(pady=20)
 
-        self.upload_button = tk.Button(self.root, text="Upload Excel File", command=self.upload_file, width=20)
-        self.upload_button.pack(pady=10)
+        self.upload_button = tk.Button(self.root, text="Upload Excel File", command=self.upload_file, width=25, bg="#4CAF50", fg="white", font=("Helvetica", 12))
+        self.upload_button.pack(pady=15)
 
-        self.filter_button = tk.Button(self.root, text="Filter Parameters", command=self.open_checkbox_window, width=20)
-        self.filter_button.pack(pady=10)
+        self.filter_button = tk.Button(self.root, text="Filter Parameters", command=self.open_checkbox_window, width=25, bg="#2196F3", fg="white", font=("Helvetica", 12))
+        self.filter_button.pack(pady=15)
 
-        self.value_entry_frame = tk.LabelFrame(self.root, text="Search Criteria", padx=10, pady=10)
-        self.value_entry_frame.pack(pady=10, fill=tk.BOTH, expand=True)
+        self.value_entry_frame = tk.LabelFrame(self.root, text="Search Criteria", padx=10, pady=10, font=("Helvetica", 14, "bold"))
+        self.value_entry_frame.pack(pady=15, fill=tk.BOTH, expand=True)
 
-        self.search_button = tk.Button(self.root, text="Search", command=self.search_material, width=20)
-        self.search_button.pack(pady=10)
+        self.search_button = tk.Button(self.root, text="Search", command=self.search_material, width=25, bg="#f57c00", fg="white", font=("Helvetica", 12))
+        self.search_button.pack(pady=15)
 
-        self.reset_button = tk.Button(self.root, text="Reset", command=self.reset_search, width=20)
-        self.reset_button.pack(pady=10)
+        self.reset_button = tk.Button(self.root, text="Reset", command=self.reset_search, width=25, bg="#d32f2f", fg="white", font=("Helvetica", 12))
+        self.reset_button.pack(pady=15)
 
-        result_label = tk.Label(self.root, text="Results", font=("Helvetica", 14))
-        result_label.pack(pady=5)
+        result_label = tk.Label(self.root, text="Results", font=("Helvetica", 16, "bold"))
+        result_label.pack(pady=10)
 
-        self.result_text = tk.Text(self.root, height=15, width=58, wrap=tk.WORD)
+        self.result_text = tk.Text(self.root, height=15, width=70, wrap=tk.WORD, font=("Helvetica", 12), bg="#f1f1f1")
         self.result_text.pack(pady=10)
         self.result_text.config(state=tk.DISABLED)
 
@@ -92,10 +92,11 @@ class ExcelApp:
         scrollbar.pack(side="right", fill="y")
 
         for column in self.columns:
-            var = tk.BooleanVar(value=column in self.selected_columns)
-            checkbox = tk.Checkbutton(scrollable_frame, text=column, variable=var, command=self.update_selected_columns)
-            checkbox.pack(anchor=tk.W)
-            self.column_vars[column] = var
+            if column not in self.selected_columns:  # Adjust this condition to filter out unnecessary columns
+                var = tk.BooleanVar(value=False)
+                checkbox = tk.Checkbutton(scrollable_frame, text=column, variable=var, command=self.update_selected_columns, font=("Helvetica", 12))
+                checkbox.pack(anchor=tk.W, pady=2)
+                self.column_vars[column] = var
 
     def update_selected_columns(self):
         self.selected_columns = [col for col, var in self.column_vars.items() if var.get()]
@@ -107,11 +108,11 @@ class ExcelApp:
 
         self.entries = {}
         for column in self.selected_columns:
-            label = tk.Label(self.value_entry_frame, text=column)
-            label.pack(anchor=tk.W)
-            from_entry = tk.Entry(self.value_entry_frame)
+            label = tk.Label(self.value_entry_frame, text=column, font=("Helvetica", 12))
+            label.pack(anchor=tk.W, pady=2)
+            from_entry = tk.Entry(self.value_entry_frame, font=("Helvetica", 12), bd=2, relief="solid")
             from_entry.pack(anchor=tk.W, fill=tk.X, pady=2)
-            to_entry = tk.Entry(self.value_entry_frame)
+            to_entry = tk.Entry(self.value_entry_frame, font=("Helvetica", 12), bd=2, relief="solid")
             to_entry.pack(anchor=tk.W, fill=tk.X, pady=2)
             self.entries[column] = (from_entry, to_entry)
 
@@ -198,7 +199,6 @@ class ExcelApp:
         for var in self.column_vars.values():
             var.set(False)
         messagebox.showinfo("Reset", "Search criteria and results have been reset.")
-
 
 if __name__ == "__main__":
     root = tk.Tk()

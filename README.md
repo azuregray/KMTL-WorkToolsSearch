@@ -11,6 +11,7 @@
 ## Installation
 
 - **Requirements / Dependencies**
+- Method 01:
 > Do note that requirements are listed in requirements.txt in the root folder.
 ```
 python -m pip install pandas
@@ -20,14 +21,18 @@ python -m pip install openpyxl
 python -m pip install xlrd
 python -m pip install numpy
 ```
-- **How to run**
 
-> Please note that this code is currently intended to run on Windows OS only.
-> Requirements can be installed with a simple command while being in the root folder.
+-Method 02:
+
+Requirements can be installed with a simple command while being in the root folder.
 ```
 python -m pip install -r requirements.txt
 ```
-and then you may run the program:
+
+> Please note that this code is currently intended to run on Windows OS only.
+
+- **How to run**
+
 ```
 # Assuming you are inside the cloned folder
 # Just run this in Terminal (Interpreter: PowerShell):

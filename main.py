@@ -1,13 +1,16 @@
 import tkinter as tk
-from tkinter import filedialog, Toplevel
+from tkinter import filedialog, messagebox
 import pandas as pd
+import os
+import re
+
 
 class ExcelApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Kennametal Data Search")
-        self.root.geometry("800x600")
-        self.root.resizable(True, True)  # Make the main window resizable
+        self.root.geometry("1000x600")
+        self.root.resizable(True, True)
 
         try:
             self.root.wm_iconbitmap('logo.ico')
@@ -36,7 +39,7 @@ class ExcelApp:
         title_label = tk.Label(self.left_frame, text="Kennametal Data Search", font=("Helvetica", 18, "bold"), fg="#333333")
         title_label.pack(pady=20)
 
-        self.upload_button = tk.Button(self.left_frame, text="Upload Excel File", command=self.upload_file, width=25, font=("Helvetica", 12))
+        self.upload_button = tk.Button(self.left_frame, text="Upload and Clean Excel File", command=self.upload_and_clean_file, width=30, font=("Helvetica", 12))
         self.upload_button.pack(pady=15)
 
         self.value_entry_frame = tk.LabelFrame(self.left_frame, text="Search Criteria", padx=10, pady=10, font=("Helvetica", 14, "bold"))
@@ -47,6 +50,12 @@ class ExcelApp:
 
         self.reset_button = tk.Button(self.left_frame, text="Reset", command=self.reset_search, width=25, bg="#d32f2f", font=("Helvetica", 12))
         self.reset_button.pack(pady=15)
+
+        self.results_frame = tk.Frame(self.left_frame)
+        self.results_frame.pack(pady=20, fill=tk.BOTH, expand=True)
+
+        self.results_text = tk.Text(self.results_frame, wrap=tk.WORD, font=("Helvetica", 12))
+        self.results_text.pack(expand=True, fill=tk.BOTH)
 
         self.create_column_selection()
 
@@ -74,18 +83,50 @@ class ExcelApp:
         self.filter_button = tk.Button(self.right_frame, text="Add Filter", command=self.update_selected_columns, width=25, font=("Helvetica", 12))
         self.filter_button.pack(pady=15)
 
-    def upload_file(self):
+    def upload_and_clean_file(self):
         file_path = filedialog.askopenfilename(
             title="Select an Excel File",
             filetypes=(("Excel files", "*.xlsx *.xls"), ("All files", "*.*"))
         )
         if file_path:
             try:
-                self.df = pd.read_excel(file_path)
+                # Clean and load the Excel file
+                self.df = self.clean_excel_file(file_path)
                 self.columns = list(self.df.columns)
                 self.create_column_selection()
+                messagebox.showinfo("Success", f"Data cleaned and loaded from: {os.path.basename(file_path)}")
             except Exception as e:
-                print(f"Failed to load Excel file: {e}")
+                messagebox.showerror("Error", f"Failed to process the Excel file: {e}")
+
+    def clean_excel_file(self, file_path):
+        try:
+            if file_path.endswith('.xls'):
+                df = pd.read_excel(file_path, engine='xlrd')
+            else:
+                df = pd.read_excel(file_path, engine='openpyxl')
+
+            # Clean data
+            df = self.clean_data(df)
+
+            # Save cleaned data
+            cleaned_file_path = file_path.rsplit('.', 1)[0] + "_cleaned.xlsx"
+            df.to_excel(cleaned_file_path, index=False, na_rep='')  # na_rep='' keeps cells empty
+            return df
+        except Exception as e:
+            raise Exception(f"Error cleaning Excel file: {e}")
+
+    def clean_data(self, df):
+        for column in df.columns:
+            if df[column].dtype == 'object':
+                df[column] = df[column].apply(self.clean_value)
+        return df
+
+    def clean_value(self, value):
+        if isinstance(value, str):
+            if re.match(r'^\d', value):
+                return re.sub(r'[^\d.]', '', value)
+            return value
+        return value
 
     def update_selected_columns(self):
         for widget in self.scrollable_frame.winfo_children():
@@ -106,30 +147,51 @@ class ExcelApp:
 
         self.entries = {}
         for column in self.selected_columns:
-            frame = tk.Frame(self.value_entry_frame)
-            frame.pack(anchor=tk.W, fill=tk.X, pady=2)
+            if self.is_numeric_column(column):
+                frame = tk.Frame(self.value_entry_frame)
+                frame.pack(anchor=tk.W, fill=tk.X, pady=2)
 
-            label = tk.Label(frame, text=column, font=("Helvetica", 12))
-            label.pack(side=tk.LEFT)
+                label = tk.Label(frame, text=column, font=("Helvetica", 12))
+                label.pack(side=tk.LEFT)
 
-            from_entry = tk.Entry(frame, font=("Helvetica", 12), bd=2, relief="solid", width=10)
-            from_entry.pack(side=tk.LEFT, padx=5)
+                from_entry = tk.Entry(frame, font=("Helvetica", 12), bd=2, relief="solid", width=10)
+                from_entry.pack(side=tk.LEFT, padx=5)
 
-            to_entry = tk.Entry(frame, font=("Helvetica", 12), bd=2, relief="solid", width=10)
-            to_entry.pack(side=tk.LEFT, padx=5)
+                to_entry = tk.Entry(frame, font=("Helvetica", 12), bd=2, relief="solid", width=10)
+                to_entry.pack(side=tk.LEFT, padx=5)
 
-            reset_button = tk.Button(frame, text="Reset Value", command=lambda col=column: self.reset_value(col), font=("Helvetica", 10))
-            reset_button.pack(side=tk.LEFT, padx=5)
+                reset_button = tk.Button(frame, text="Reset Value", command=lambda col=column: self.reset_value(col), font=("Helvetica", 10))
+                reset_button.pack(side=tk.LEFT, padx=5)
 
-            remove_button = tk.Button(frame, text="Remove", command=lambda col=column: self.remove_entry(col), font=("Helvetica", 10))
-            remove_button.pack(side=tk.LEFT, padx=5)
+                remove_button = tk.Button(frame, text="Remove", command=lambda col=column: self.remove_entry(col), font=("Helvetica", 10))
+                remove_button.pack(side=tk.LEFT, padx=5)
 
-            self.entries[column] = (from_entry, to_entry)
+                self.entries[column] = (from_entry, to_entry)
+            else:
+                frame = tk.Frame(self.value_entry_frame)
+                frame.pack(anchor=tk.W, fill=tk.X, pady=2)
+
+                label = tk.Label(frame, text=column, font=("Helvetica", 12))
+                label.pack(side=tk.LEFT)
+
+                dropdown_values = list(self.df[column].dropna().unique())
+                dropdown = tk.StringVar()
+                dropdown_menu = tk.OptionMenu(frame, dropdown, *dropdown_values)
+                dropdown_menu.pack(side=tk.LEFT, padx=5)
+
+                remove_button = tk.Button(frame, text="Remove", command=lambda col=column: self.remove_entry(col), font=("Helvetica", 10))
+                remove_button.pack(side=tk.LEFT, padx=5)
+
+                self.entries[column] = dropdown
 
     def reset_value(self, column):
-        from_entry, to_entry = self.entries[column]
-        from_entry.delete(0, tk.END)
-        to_entry.delete(0, tk.END)
+        if self.is_numeric_column(column):
+            from_entry, to_entry = self.entries[column]
+            from_entry.delete(0, tk.END)
+            to_entry.delete(0, tk.END)
+        else:
+            dropdown = self.entries[column]
+            dropdown.set('')
 
     def remove_entry(self, column):
         if column in self.entries:
@@ -140,7 +202,7 @@ class ExcelApp:
 
     def is_numeric_column(self, column):
         try:
-            self.df[column].astype(float) # type: ignore
+            self.df[column].astype(float)
             return True
         except ValueError:
             return False
@@ -149,64 +211,62 @@ class ExcelApp:
         if self.df is not None:
             self.search_values = {}
 
-            for column, (from_entry, to_entry) in self.entries.items():
-                from_value = from_entry.get()
-                to_value = to_entry.get()
-                if from_value.strip() or to_value.strip():
-                    self.search_values[column] = (from_value, to_value)
+            for column, entry in self.entries.items():
+                if self.is_numeric_column(column):
+                    from_value, to_value = entry
+                    from_value = from_value.get()
+                    to_value = to_value.get()
+                    if from_value.strip() or to_value.strip():
+                        self.search_values[column] = (from_value, to_value)
+                else:
+                    dropdown = entry
+                    selected_value = dropdown.get()
+                    if selected_value:
+                        self.search_values[column] = selected_value
 
             if self.selected_columns and self.search_values:
                 try:
                     result_df = self.df.copy()
-                    for column, (from_value, to_value) in self.search_values.items():
+                    for column, value in self.search_values.items():
                         if self.is_numeric_column(column):
-                            if from_value:
-                                result_df = result_df[result_df[column].astype(float) >= float(from_value)]
-                            if to_value:
-                                result_df = result_df[result_df[column].astype(float) <= float(to_value)]
+                            from_value, to_value = value
+                            from_value = float(from_value) if from_value.strip() else float('-inf')
+                            to_value = float(to_value) if to_value.strip() else float('inf')
+                            result_df = result_df[(result_df[column].astype(float) >= from_value) & (result_df[column].astype(float) <= to_value)]
                         else:
-                            if from_value:
-                                result_df = result_df[result_df[column].astype(str).str.contains(from_value, na=False, case=False)]
-                            if to_value:
-                                result_df = result_df[result_df[column].astype(str).str.contains(to_value, na=False, case=False)]
+                            result_df = result_df[result_df[column] == value]
 
                     self.search_results = result_df
-                    self.display_results(result_df)
-                except KeyError as e:
-                    print(f"Column '{e}' does not exist in the DataFrame.")
+                    self.display_results()
                 except Exception as e:
-                    print(f"Error during search: {e}")
+                    messagebox.showerror("Error", f"Search failed: {e}")
             else:
-                print("Please select at least one column and enter values to search.")
+                messagebox.showinfo("Info", "Please select columns and provide search criteria.")
         else:
-            print("Please upload an Excel file first.")
+            messagebox.showinfo("Info", "No data available. Please upload a file first.")
 
-    def display_results(self, result_df):
-        results_window = Toplevel(self.root)
-        results_window.title("Search Results")
-        results_window.geometry("500x400")
-
-        result_text = tk.Text(results_window, wrap=tk.WORD, font=("Helvetica", 12))
-        result_text.pack(expand=True, fill=tk.BOTH)
-
-        if not result_df.empty:
-            result_str = result_df.to_string(index=False)
-            num_rows = len(result_df)
-            material_numbers = result_df.iloc[:, 1].tolist()
-            result_text.insert(tk.END, f"Total rows found: {num_rows}\n\nMaterials:\n")
+    def display_results(self):
+        self.results_text.delete("1.0", tk.END)
+        if self.search_results is not None and not self.search_results.empty:
+            num_rows = len(self.search_results)
+            material_numbers = self.search_results.iloc[:, 1].tolist()  # Assuming material numbers are in the second column
+            self.results_text.insert(tk.END, f"Total rows found: {num_rows}\n\nMaterials:\n")
             for number in material_numbers:
-                result_text.insert(tk.END, f"{number}\n")
+                self.results_text.insert(tk.END, f"{number}\n")
         else:
-            result_text.insert(tk.END, "No results found.")
+            self.results_text.insert(tk.END, "No results found.")
+
 
     def reset_search(self):
-        self.selected_columns = []
-        self.search_values = {}
         for widget in self.value_entry_frame.winfo_children():
             widget.destroy()
-        for var in self.column_vars.values():
-            var.set(False)
-        print("Search criteria and results have been reset.")
+        self.entries = {}
+        self.selected_columns = []
+        self.search_values = {}
+        self.search_results = None
+        self.results_text.delete("1.0", tk.END)
+        self.update_selected_columns()
+
 
 if __name__ == "__main__":
     root = tk.Tk()

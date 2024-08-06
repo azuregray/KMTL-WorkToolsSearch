@@ -2,6 +2,8 @@
 
 ### KENNAMETAL SHARED SERVICES PVT. LTD.
 
+#### Description: A well designed and responsive ML integrated search interface for searching through internal database of achieved projects for guiding employees across Kennametal for efficient worktime.
+
 > Project received by my team at **Department of AI & ML - Sri Krishna Insititute of Technology**
 
 >  **PROJECT MANAGER & LEAD ORGANIZER :: D A R S H A N &ensp; S >> [GitHub](https://github.com/azuregray/) | [LinkedIn](https://linkedin.com/in/arcticblue)**
@@ -10,7 +12,6 @@
 
 > **INTERFACE DESIGNER & SECONDARY DEVELOPER :: D A R S H A N &ensp; S A D A S H I V A >> [GitHub](https://github.com/darshansadashiva) | [LinkedIn](http://linkedin.com/in/darshansadashiva)**
 
-#### A well designed and responsive ML integrated search interface for searching through internal database of achieved projects for guiding employees across Kennametal for efficient worktime.
 ---
 ## Installation
 

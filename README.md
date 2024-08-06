@@ -27,7 +27,7 @@ Assuming you are inside the cloned folder, just run this in Terminal *(Interpret
 python main.py
 ```
 ---
-- **URL for the origin repository is as below**
+- **URL for the original repository is as below:**
 
 > https://github.com/azuregray/WorkTools-Data-Search-Model/
 

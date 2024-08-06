@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import pandas as pd
-import os
-import re
+import os, re
 
 
 class ExcelApp:

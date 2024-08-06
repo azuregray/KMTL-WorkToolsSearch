@@ -28,7 +28,7 @@ python main.py
 > Please note that this whole project is currently intended to run on Windows OS only.
 
 - **How to run the package:**
-> Step 01: Please use [releases](https://github.com/azuregray/KMTL-WorkTools-Search/releases) to find the latest app (.exe)
+> Step 01: Please use our [Releases](https://github.com/azuregray/KMTL-WorkToolsSearch/releases/latest) page to find the latest app (.exe)
 
 > Step 02: Download and Run "Kennametal WorkTools Search App"
 ---

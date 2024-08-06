@@ -11,20 +11,9 @@
 ## Installation
 
 - **Requirements / Dependencies**
-- Method 01:
-> Do note that requirements are listed in requirements.txt in the root folder.
-```
-python -m pip install pandas
-python -m pip install tkinter
-python -m pip install time
-python -m pip install openpyxl
-python -m pip install xlrd
-python -m pip install numpy
-```
 
--Method 02:
+> Do note that requirements are listed in requirements.txt in the root folder. So they can be installed with a simple command while being in the root folder.
 
-Requirements can be installed with a simple command while being in the root folder.
 ```
 python -m pip install -r requirements.txt
 ```
@@ -37,7 +26,7 @@ Assuming you are inside the cloned folder, just run this in Terminal *(Interpret
 ```
 python main.py
 ```
-
+---
 - **URL for the origin repository is as below**
 
 > https://github.com/azuregray/WorkTools-Data-Search-Model/

@@ -1,14 +1,15 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox, Toplevel
+from tkinter import filedialog, messagebox, Toplevel, Scrollbar, Text, Label, Entry, Button, BooleanVar
 import pandas as pd
-
+import re
 
 class ExcelApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Kennametal Data Search")
-        self.root.geometry("600x800")
-        self.root.resizable(False, False)
+        self.root.geometry("800x600")
+        self.root.configure(bg="#f0f0f0")  # Set background color
+        self.root.resizable(True, True)  # Allow resizing in both dimensions
 
         try:
             self.root.wm_iconbitmap('logo.ico')
@@ -25,30 +26,28 @@ class ExcelApp:
         self.create_widgets()
 
     def create_widgets(self):
-        title_label = tk.Label(self.root, text="Kennametal Data Search", font=("Helvetica", 18, "bold"), fg="#333333")
+        title_label = Label(self.root, text="Kennametal Data Search", font=("Helvetica", 18, "bold"), fg="#333333", bg="#f0f0f0")
         title_label.pack(pady=20)
 
-        self.upload_button = tk.Button(self.root, text="Upload Excel File", command=self.upload_file, width=25, bg="#4CAF50", fg="white", font=("Helvetica", 12))
-        self.upload_button.pack(pady=15)
+        button_frame = tk.Frame(self.root, bg="#f0f0f0")
+        button_frame.pack(pady=10)
 
-        self.filter_button = tk.Button(self.root, text="Filter Parameters", command=self.open_checkbox_window, width=25, bg="#2196F3", fg="white", font=("Helvetica", 12))
-        self.filter_button.pack(pady=15)
+        self.upload_button = Button(button_frame, text="Upload Excel File", command=self.upload_file, width=25, bg="#4CAF50", fg="white", font=("Helvetica", 12))
+        self.upload_button.pack(side=tk.LEFT, padx=10)
 
-        self.value_entry_frame = tk.LabelFrame(self.root, text="Search Criteria", padx=10, pady=10, font=("Helvetica", 14, "bold"))
+        self.filter_button = Button(button_frame, text="Filter Parameters", command=self.open_checkbox_window, width=25, bg="#2196F3", fg="white", font=("Helvetica", 12))
+        self.filter_button.pack(side=tk.LEFT, padx=10)
+
+        self.value_entry_frame = tk.LabelFrame(self.root, text="Search Criteria", padx=10, pady=10, font=("Helvetica", 14, "bold"), bg="#f0f0f0")
         self.value_entry_frame.pack(pady=15, fill=tk.BOTH, expand=True)
 
-        self.search_button = tk.Button(self.root, text="Search", command=self.search_material, width=25, bg="#f57c00", fg="white", font=("Helvetica", 12))
-        self.search_button.pack(pady=15)
+        self.search_button = Button(self.root, text="Search", command=self.search_material, width=25, bg="#f57c00", fg="white", font=("Helvetica", 12))
+        self.search_button.pack(pady=10)
 
-        self.reset_button = tk.Button(self.root, text="Reset", command=self.reset_search, width=25, bg="#d32f2f", fg="white", font=("Helvetica", 12))
-        self.reset_button.pack(pady=15)
+        self.reset_button = Button(self.root, text="Reset", command=self.reset_search, width=25, bg="#d32f2f", fg="white", font=("Helvetica", 12))
+        self.reset_button.pack(pady=10)
 
-        result_label = tk.Label(self.root, text="Results", font=("Helvetica", 16, "bold"))
-        result_label.pack(pady=10)
-
-        self.result_text = tk.Text(self.root, height=15, width=70, wrap=tk.WORD, font=("Helvetica", 12), bg="#f1f1f1")
-        self.result_text.pack(pady=10)
-        self.result_text.config(state=tk.DISABLED)
+        self.result_window = None  # To store the Toplevel window for displaying results
 
     def upload_file(self):
         file_path = filedialog.askopenfilename(
@@ -75,7 +74,7 @@ class ExcelApp:
         checkbox_window.lift()
 
         canvas = tk.Canvas(checkbox_window)
-        scrollbar = tk.Scrollbar(checkbox_window, orient="vertical", command=canvas.yview)
+        scrollbar = Scrollbar(checkbox_window, orient="vertical", command=canvas.yview)
         scrollable_frame = tk.Frame(canvas)
 
         scrollable_frame.bind(
@@ -93,7 +92,7 @@ class ExcelApp:
 
         for column in self.columns:
             if column not in self.selected_columns:  # Adjust this condition to filter out unnecessary columns
-                var = tk.BooleanVar(value=False)
+                var = BooleanVar(value=False)
                 checkbox = tk.Checkbutton(scrollable_frame, text=column, variable=var, command=self.update_selected_columns, font=("Helvetica", 12))
                 checkbox.pack(anchor=tk.W, pady=2)
                 self.column_vars[column] = var
@@ -108,12 +107,12 @@ class ExcelApp:
 
         self.entries = {}
         for column in self.selected_columns:
-            label = tk.Label(self.value_entry_frame, text=column, font=("Helvetica", 12))
-            label.pack(anchor=tk.W, pady=2)
-            from_entry = tk.Entry(self.value_entry_frame, font=("Helvetica", 12), bd=2, relief="solid")
-            from_entry.pack(anchor=tk.W, fill=tk.X, pady=2)
-            to_entry = tk.Entry(self.value_entry_frame, font=("Helvetica", 12), bd=2, relief="solid")
-            to_entry.pack(anchor=tk.W, fill=tk.X, pady=2)
+            label = Label(self.value_entry_frame, text=column, font=("Helvetica", 12), bg="#f0f0f0")
+            label.pack(anchor=tk.W, padx=5, pady=2)
+            from_entry = Entry(self.value_entry_frame, font=("Helvetica", 12), bd=2, relief="solid", width=15)
+            from_entry.pack(anchor=tk.W, padx=5, pady=2)
+            to_entry = Entry(self.value_entry_frame, font=("Helvetica", 12), bd=2, relief="solid", width=15)
+            to_entry.pack(anchor=tk.W, padx=5, pady=2)
             self.entries[column] = (from_entry, to_entry)
 
     def is_numeric_column(self, column):
@@ -123,8 +122,25 @@ class ExcelApp:
         except ValueError:
             return False
 
+    def preprocess_value(self, value):
+        # Convert value to float if possible, otherwise handle units and strings
+        if re.search(r'\d', value):
+            try:
+                return float(value)
+            except ValueError:
+                pass
+        if 'inch' in value.lower():
+            value = re.sub(r'[^\d.]+', '', value)
+            return float(value) * 25.4  # Convert inches to mm
+        return value
+
+    def preprocess_dataframe(self):
+        for column in self.df.columns: # type: ignore
+            self.df[column] = self.df[column].astype(str).apply(self.preprocess_value) # type: ignore
+
     def search_material(self):
         if self.df is not None:
+            self.preprocess_dataframe()
             self.search_values = {}
 
             for column, (from_entry, to_entry) in self.entries.items():
@@ -138,6 +154,8 @@ class ExcelApp:
                     result_df = self.df.copy()
                     for column, (from_value, to_value) in self.search_values.items():
                         if self.is_numeric_column(column):
+                            from_value = self.preprocess_value(from_value)
+                            to_value = self.preprocess_value(to_value)
                             if from_value:
                                 try:
                                     result_df = result_df[result_df[column].astype(float) >= float(from_value)]
@@ -168,37 +186,48 @@ class ExcelApp:
             messagebox.showwarning("File Error", "Please upload an Excel file first.")
 
     def display_results(self, result_df):
-        self.result_text.config(state=tk.NORMAL)
-        self.result_text.delete('1.0', tk.END)
+        if self.result_window:
+            self.result_window.destroy()
+
+        self.result_window = Toplevel(self.root)
+        self.result_window.title("Search Results")
+        self.result_window.geometry("800x400")
+
+        result_text = Text(self.result_window, height=20, width=100, wrap=tk.WORD, font=("Helvetica", 12), bg="#ffffff")
+        result_text.pack(pady=10, fill=tk.BOTH, expand=True)
+        result_text.config(state=tk.NORMAL)
+
         if self.search_values:
-            self.result_text.insert(tk.END, "Search Values:\n")
+            result_text.insert(tk.END, "Search Values:\n")
             for col, (from_val, to_val) in self.search_values.items():
-                self.result_text.insert(tk.END, f"{col} - From: {from_val}, To: {to_val}\n")
-            self.result_text.insert(tk.END, "\n")
+                result_text.insert(tk.END, f"{col} - From: {from_val}, To: {to_val}\n")
+            result_text.insert(tk.END, "\n")
 
         if not result_df.empty:
             result_str = result_df.to_string(index=False)
             num_rows = len(result_df)
             material_numbers = result_df.iloc[:, 1].tolist()
-            self.result_text.insert(tk.END, f"Total rows found: {num_rows}\n\n")
-            self.result_text.insert(tk.END, "Materials:\n")
+            result_text.insert(tk.END, f"Total rows found: {num_rows}\n\n")
+            result_text.insert(tk.END, "Materials:\n")
             for number in material_numbers:
-                self.result_text.insert(tk.END, f"{number}\n")
+                result_text.insert(tk.END, f"{number}\n")
         else:
-            self.result_text.insert(tk.END, "No results found.")
-        self.result_text.config(state=tk.DISABLED)
+            result_text.insert(tk.END, "No results found.")
+
+        result_text.config(state=tk.DISABLED)
 
     def reset_search(self):
         self.selected_columns = []
         self.search_values = {}
-        self.result_text.config(state=tk.NORMAL)
-        self.result_text.delete('1.0', tk.END)
-        self.result_text.config(state=tk.DISABLED)
+        if self.result_window:
+            self.result_window.destroy()
+
         for widget in self.value_entry_frame.winfo_children():
             widget.destroy()
         for var in self.column_vars.values():
             var.set(False)
         messagebox.showinfo("Reset", "Search criteria and results have been reset.")
+
 
 if __name__ == "__main__":
     root = tk.Tk()

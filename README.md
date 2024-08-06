@@ -4,11 +4,11 @@
 
 > Project received by my team at **Department of AI & ML - Sri Krishna Insititute of Technology**
 
-> Project Lead: **D A R S H A N &ensp; S** >> [GitHub](https://github.com/azuregray/) | [LinkedIn](https://linkedin.com/in/arcticblue)
+> PROJECT LEAD :: **D A R S H A N &ensp; S** >> [GitHub](https://github.com/azuregray/) | [LinkedIn](https://linkedin.com/in/arcticblue)
 
-> Primary Developer: **V E N U &ensp; G O P A L &ensp; S &ensp; R** >> GitHub | LinkedIn
+> PRIMARY DEVELOPER :: **V E N U &ensp; G O P A L &ensp; S &ensp; R** >> [GitHub](https://github.com/srvenu) | [LinkedIn](https://www.linkedin.com/in/venu-s-raj)
 
-> Designer & Secondary Developer: **D A R S H A N &ensp; S A D A S H I V A** >> [GitHub](https://github.com/darshansadashiva) | LinkedI
+> INTERFACE DESIGNER & SECONDARY DEVELOPER :: **D A R S H A N &ensp; S A D A S H I V A** >> [GitHub](https://github.com/darshansadashiva) | [LinkedIn](http://linkedin.com/in/darshansadashiva)
 
 #### A well designed and responsive ML integrated search interface for searching through internal database of achieved projects for guiding employees across Kennametal for efficient worktime.
 ---

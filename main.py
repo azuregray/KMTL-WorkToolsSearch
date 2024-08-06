@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, Toplevel
 import pandas as pd
 
+
 class ExcelApp:
     def __init__(self, root):
         self.root = root
@@ -12,7 +13,7 @@ class ExcelApp:
         try:
             self.root.wm_iconbitmap('logo.ico')
         except Exception as e:
-            print("Icon file not found: ", e)
+            print("Icon file not found:", e)
 
         self.df = None
         self.columns = []
@@ -71,6 +72,7 @@ class ExcelApp:
         checkbox_window = Toplevel(self.root)
         checkbox_window.title("Select Columns")
         checkbox_window.geometry("300x400")
+        checkbox_window.lift()
 
         canvas = tk.Canvas(checkbox_window)
         scrollbar = tk.Scrollbar(checkbox_window, orient="vertical", command=canvas.yview)
@@ -78,18 +80,13 @@ class ExcelApp:
 
         scrollable_frame.bind(
             "<Configure>",
-            lambda e: canvas.configure(
-                scrollregion=canvas.bbox("all")
-            )
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
         )
 
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
 
-        def _on_mouse_wheel(event):
-            canvas.yview_scroll(int(-1*(event.delta/120)), "units")
-
-        canvas.bind_all("<MouseWheel>", _on_mouse_wheel)
+        canvas.bind_all("<MouseWheel>", lambda event: canvas.yview_scroll(int(-1 * (event.delta / 120)), "units"))
 
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
@@ -112,22 +109,39 @@ class ExcelApp:
         for column in self.selected_columns:
             label = tk.Label(self.value_entry_frame, text=column)
             label.pack(anchor=tk.W)
-            entry = tk.Entry(self.value_entry_frame)
-            entry.pack(anchor=tk.W, fill=tk.X, pady=5)
-            self.entries[column] = entry
+            from_entry = tk.Entry(self.value_entry_frame)
+            from_entry.pack(anchor=tk.W, fill=tk.X, pady=2)
+            to_entry = tk.Entry(self.value_entry_frame)
+            to_entry.pack(anchor=tk.W, fill=tk.X, pady=2)
+            self.entries[column] = (from_entry, to_entry)
 
     def search_material(self):
         if self.df is not None:
-            self.search_values = {column: entry.get() for column, entry in self.entries.items()}
+            self.search_values = {}
+
+            for column, (from_entry, to_entry) in self.entries.items():
+                from_value = from_entry.get()
+                to_value = to_entry.get()
+                if from_value.strip() or to_value.strip():
+                    self.search_values[column] = (from_value, to_value)
 
             if self.selected_columns and self.search_values:
-                result_df = self.df[
-                    self.df[self.selected_columns].astype(str).apply(
-                        lambda row: all(self.search_values[col] in str(row[col]) for col in self.selected_columns), axis=1
-                    )
-                ]
-                self.search_results = result_df
-                self.display_results(result_df)
+                try:
+                    result_df = self.df.copy()
+                    for column, (from_value, to_value) in self.search_values.items():
+                        if from_value:
+                            result_df = result_df[result_df[column].astype(float) >= float(from_value)]
+                        if to_value:
+                            result_df = result_df[result_df[column].astype(float) <= float(to_value)]
+
+                    self.search_results = result_df
+                    self.display_results(result_df)
+                except KeyError as e:
+                    messagebox.showerror("Column Error", f"Column '{e}' does not exist in the DataFrame.")
+                except ValueError as e:
+                    messagebox.showerror("Value Error", f"Error during value conversion: {e}")
+                except Exception as e:
+                    messagebox.showerror("Search Error", f"Error during search: {e}")
             else:
                 messagebox.showwarning("Input Error", "Please select at least one column and enter values to search.")
         else:
@@ -138,8 +152,8 @@ class ExcelApp:
         self.result_text.delete('1.0', tk.END)
         if self.search_values:
             self.result_text.insert(tk.END, "Search Values:\n")
-            for col, val in self.search_values.items():
-                self.result_text.insert(tk.END, f"{col}: {val}\n")
+            for col, (from_val, to_val) in self.search_values.items():
+                self.result_text.insert(tk.END, f"{col} - From: {from_val}, To: {to_val}\n")
             self.result_text.insert(tk.END, "\n")
 
         if not result_df.empty:
@@ -166,6 +180,8 @@ class ExcelApp:
             var.set(False)
         messagebox.showinfo("Reset", "Search criteria and results have been reset.")
 
-root = tk.Tk()
-app = ExcelApp(root)
-root.mainloop()
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = ExcelApp(root)
+    root.mainloop()

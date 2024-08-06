@@ -32,11 +32,8 @@ python -m pip install -r requirements.txt
 > Please note that this code is currently intended to run on Windows OS only.
 
 - **How to run**
-
+Assuming you are inside the cloned folder, just run this in Terminal *(Interpreter: PowerShell)*:
 ```
-# Assuming you are inside the cloned folder
-# Just run this in Terminal (Interpreter: PowerShell):
-
 python main.py
 ```
 

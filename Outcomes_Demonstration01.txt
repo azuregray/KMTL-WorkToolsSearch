@@ -1,7 +1,0 @@
-:: Demo Meet 01 - 28 Jun 2024 - FEEDBACK
-
-Implement dropdown for attributes with less unique countable number of repeated data as choices
-For more precise and uncountable ones implement range
-Implement Filter Reset Option
-Implement Filter Add Option
-Better GUI and interface

@@ -115,6 +115,13 @@ class ExcelApp:
             to_entry.pack(anchor=tk.W, fill=tk.X, pady=2)
             self.entries[column] = (from_entry, to_entry)
 
+    def is_numeric_column(self, column):
+        try:
+            self.df[column].astype(float) # type: ignore
+            return True
+        except ValueError:
+            return False
+
     def search_material(self):
         if self.df is not None:
             self.search_values = {}
@@ -129,17 +136,29 @@ class ExcelApp:
                 try:
                     result_df = self.df.copy()
                     for column, (from_value, to_value) in self.search_values.items():
-                        if from_value:
-                            result_df = result_df[result_df[column].astype(float) >= float(from_value)]
-                        if to_value:
-                            result_df = result_df[result_df[column].astype(float) <= float(to_value)]
+                        if self.is_numeric_column(column):
+                            if from_value:
+                                try:
+                                    result_df = result_df[result_df[column].astype(float) >= float(from_value)]
+                                except ValueError:
+                                    messagebox.showerror("Value Error", f"Column '{column}' contains non-numeric values.")
+                                    return
+                            if to_value:
+                                try:
+                                    result_df = result_df[result_df[column].astype(float) <= float(to_value)]
+                                except ValueError:
+                                    messagebox.showerror("Value Error", f"Column '{column}' contains non-numeric values.")
+                                    return
+                        else:
+                            if from_value:
+                                result_df = result_df[result_df[column].astype(str).str.contains(from_value, na=False, case=False)]
+                            if to_value:
+                                result_df = result_df[result_df[column].astype(str).str.contains(to_value, na=False, case=False)]
 
                     self.search_results = result_df
                     self.display_results(result_df)
                 except KeyError as e:
                     messagebox.showerror("Column Error", f"Column '{e}' does not exist in the DataFrame.")
-                except ValueError as e:
-                    messagebox.showerror("Value Error", f"Error during value conversion: {e}")
                 except Exception as e:
                     messagebox.showerror("Search Error", f"Error during search: {e}")
             else:

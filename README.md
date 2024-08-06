@@ -1,7 +1,42 @@
 # W O R K T O O L S &emsp; D A T A &emsp; S E A R C H
 
-> Project Provider: **KENNAMETAL SHARED SERVICES PVT. LTD.**
+### Project Provider: **KENNAMETAL SHARED SERVICES PVT. LTD.**
 
 > Project received by **Department of AI & ML - Sri Krishna Insititute of Technology**
 
 > Team Members: **D A R S H A N &ensp; S** &ensp;|&ensp; **V E N U &ensp; G O P A L &ensp; S &ensp; R** &ensp;|&ensp; **D A R S H A N &ensp; S A D A S H I V A**
+
+#### A well designed and responsive ML integrated search interface for searching through internal database of achieved projects for guiding employees across Kennametal for efficient worktime.
+---
+## Installation
+
+- **Requirements / Dependencies**
+> Do note that requirements are listed in requirements.txt in the root folder.
+```
+python -m pip install pandas
+python -m pip install tkinter
+python -m pip install time
+python -m pip install openpyxl
+python -m pip install xlrd
+python -m pip install numpy
+```
+- **How to run**
+
+> Please note that this code is currently intended to run on Windows OS only.
+> Requirements can be installed with a simple command while being in the root folder.
+```
+python -m pip install -r requirements.txt
+```
+and then you may run the program:
+```
+# Assuming you are inside the cloned folder
+# Just run this in Terminal (Interpreter: PowerShell):
+
+python main.py
+```
+
+- **URL for the origin repository is as below**
+
+> https://github.com/azuregray/WorkTools-Data-Search-Model/
+
+---

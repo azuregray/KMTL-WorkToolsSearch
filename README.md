@@ -1,6 +1,6 @@
 # W O R K T O O L S &emsp; D A T A &emsp; S E A R C H &emsp; M O D E L
 
-> Project Provider: **Kennametal Shared Services Private Ltd.**
+> Project Provider: **KENNAMETAL SHARED SERVICES PVT. LTD.**
 
 > Project received by **Department of Artificial Intelligence - Sri Krishna Insititute of Technology**
 

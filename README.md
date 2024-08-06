@@ -4,7 +4,7 @@
 
 > Project received by my team at **Department of AI & ML - Sri Krishna Insititute of Technology**
 
-> PROJECT LEAD **:: D A R S H A N &ensp; S** >> [GitHub](https://github.com/azuregray/) | [LinkedIn](https://linkedin.com/in/arcticblue)
+>  **D A R S H A N &ensp; S :: PROJECT LEAD >> [GitHub](https://github.com/azuregray/) | [LinkedIn](https://linkedin.com/in/arcticblue)**
 
 > PRIMARY DEVELOPER **:: V E N U &ensp; G O P A L &ensp; S &ensp; R** >> [GitHub](https://github.com/srvenu) | [LinkedIn](https://www.linkedin.com/in/venu-s-raj)
 

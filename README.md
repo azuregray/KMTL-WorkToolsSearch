@@ -15,22 +15,22 @@
 ---
 ## Installation
 
-- **Requirements / Dependencies**
+- **The Python Way:**
 
-> Do note that requirements are listed in requirements.txt in the root folder. So they can be installed with a simple command while being in the root folder.
-
-```
-python -m pip install -r requirements.txt
-```
-
-> Please note that this code is currently intended to run on Windows OS only.
-
-- **How to run**
+> Take the help of requirements.txt in the root folder.
 
 Assuming you are inside the cloned folder, just run this in Terminal *(Interpreter: PowerShell)*:
 ```
+python -m pip install -r requirements.txt
 python main.py
 ```
+
+> Please note that this whole project is currently intended to run on Windows OS only.
+
+- **How to run the package:**
+> Step 01: Please use releases to find the latest app (.exe)
+
+> Step 02: Download and Run "Kennametal WorkTools Search App"
 ---
 - **URL for the original repository is as below:**
 

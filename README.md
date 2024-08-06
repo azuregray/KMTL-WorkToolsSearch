@@ -2,9 +2,11 @@
 
 ### KENNAMETAL SHARED SERVICES PVT. LTD.
 
-> Project received by **Department of AI & ML - Sri Krishna Insititute of Technology**
+> Project received by my team at **Department of AI & ML - Sri Krishna Insititute of Technology**
 
-> Team Members: **D A R S H A N &ensp; S** &ensp;|&ensp; **V E N U &ensp; G O P A L &ensp; S &ensp; R** &ensp;|&ensp; **D A R S H A N &ensp; S A D A S H I V A**
+> Project Lead: **D A R S H A N &ensp; S** >> [GitHub](https://github.com/azuregray/) | [LinkedIn](https://linkedin.com/in/arcticblue)
+> Primary Developer: **V E N U &ensp; G O P A L &ensp; S &ensp; R** >> GitHub | LinkedIn
+> Designer & Secondary Developer: **D A R S H A N &ensp; S A D A S H I V A** >> [GitHub](https://github.com/darshansadashiva) | LinkedIn
 
 #### A well designed and responsive ML integrated search interface for searching through internal database of achieved projects for guiding employees across Kennametal for efficient worktime.
 ---

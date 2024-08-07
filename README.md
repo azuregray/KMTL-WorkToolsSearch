@@ -6,11 +6,11 @@
 
 > Project received by my team at **Department of AI & ML - Sri Krishna Insititute of Technology**
 
->  **PROJECT MANAGER & LEAD ORGANIZER :: D A R S H A N &ensp; S >> [GitHub](https://github.com/azuregray/) | [LinkedIn](https://linkedin.com/in/arcticblue)**
+>  **D A R S H A N &ensp; S :: PROJECT MANAGER & LEAD ORGANIZER >> [GitHub](https://github.com/azuregray/) | [LinkedIn](https://linkedin.com/in/arcticblue)**
 
-> **PRIMARY DEVELOPER :: V E N U &ensp; G O P A L &ensp; S &ensp; R >> [GitHub](https://github.com/srvenu) | [LinkedIn](https://www.linkedin.com/in/venu-s-raj)**
+> **V E N U &ensp; G O P A L &ensp; S &ensp; R :: PRIMARY DEVELOPER >> [GitHub](https://github.com/srvenu) | [LinkedIn](https://www.linkedin.com/in/venu-s-raj)**
 
-> **INTERFACE DESIGNER & SECONDARY DEVELOPER :: D A R S H A N &ensp; S A D A S H I V A >> [GitHub](https://github.com/darshansadashiva) | [LinkedIn](http://linkedin.com/in/darshansadashiva)**
+> **D A R S H A N &ensp; S A D A S H I V A :: INTERFACE DESIGNER & SECONDARY DEVELOPER >> [GitHub](https://github.com/darshansadashiva) | [LinkedIn](http://linkedin.com/in/darshansadashiva)**
 
 ---
 ## Installation

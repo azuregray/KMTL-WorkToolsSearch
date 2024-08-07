@@ -225,7 +225,11 @@ class ExcelApp:
             self.create_entry_fields()
 
     def is_numeric_column(self, column):
-        return pd.api.types.is_numeric_dtype(self.df[column])
+        try:
+            self.df[column].astype(float)
+            return True
+        except ValueError:
+            return False
 
     def search_material(self):
         if self.df is not None:
@@ -271,10 +275,35 @@ class ExcelApp:
             num_rows = len(self.search_results)
             material_numbers = self.search_results.iloc[:, 1].tolist()  # Assuming material numbers are in the second column
             self.results_text.insert(tk.END, f"Total rows found: {num_rows}\n\nMaterials:\n")
-            for number in material_numbers:
+            for i, number in enumerate(material_numbers):
+                row_data = self.search_results.iloc[i].tolist()
+                view_button = tk.Button(self.results_frame, text=f"View {number}", command=lambda row=row_data: self.view_row(row))
                 self.results_text.insert(tk.END, f"{number}\n")
+                self.results_text.window_create(tk.END, window=view_button)
+                self.results_text.insert(tk.END, "\n")
         else:
             self.results_text.insert(tk.END, "No results found.")
+
+    def view_row(self, row_data):
+        details_window = tk.Toplevel(self.root)
+        details_window.title("Row Details")
+        details_window.geometry("400x300")
+
+        details_label = tk.Label(details_window, text="Row Data", font=("Helvetica", 14, "bold"))
+        details_label.pack(pady=10)
+
+        details_text = tk.Text(details_window, wrap=tk.WORD, font=("Helvetica", 12))
+        details_text.pack(expand=True, fill=tk.BOTH)
+
+        # Get column names from the DataFrame's columns
+        column_names = self.df.columns.tolist()
+        # Create a dictionary from row data
+        row_dict = dict(zip(column_names, row_data))
+        
+        # Format row data as "column_name = value"
+        formatted_data = "\n".join([f"{col} = {row_dict[col]}" for col in column_names])
+        
+        details_text.insert(tk.END, formatted_data)
 
     def reset_search(self):
         for widget in self.value_entry_frame.winfo_children():

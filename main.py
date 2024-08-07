@@ -1,13 +1,12 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, ttk
 import pandas as pd
-import os, re
-
+import os, re, tempfile, shutil
 
 class ExcelApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Kennametal Data Search")
+        self.root.title("KENNAMETAL INC. WorkTools Search")
         self.root.geometry("1000x600")
         self.root.resizable(True, True)
 
@@ -23,6 +22,10 @@ class ExcelApp:
         self.search_values = {}
         self.search_results = None
 
+        # Temporary directory setup
+        self.temp_dir = tempfile.mkdtemp(prefix="KMTL_WorkTools_Search_")
+        self.cleaned_file_path = ""
+
         self.create_widgets()
 
     def create_widgets(self):
@@ -35,14 +38,18 @@ class ExcelApp:
         self.right_frame = tk.Frame(self.main_frame, width=int(self.root.winfo_screenwidth() * 0.3))
         self.right_frame.pack(side=tk.RIGHT, fill=tk.Y)
 
-        title_label = tk.Label(self.left_frame, text="Kennametal Data Search", font=("Helvetica", 18, "bold"), fg="#333333")
+        # registered_symbol = u"\u00AE"
+        # branding_text = "KENNAMETAL INC." + registered_symbol + " WorkTools Search"
+        branding_text = "KENNAMETAL INC. WorkTools Search"
+
+        title_label = tk.Label(self.left_frame, text=branding_text, font=("HelveticaNeueLT W1G 97 BlkCn", 30, "bold"), fg="#333333")
         title_label.pack(pady=20)
 
-        self.upload_button = tk.Button(self.left_frame, text="Upload and Clean Excel File", command=self.upload_and_clean_file, width=30, font=("Helvetica", 12))
+        self.upload_button = tk.Button(self.left_frame, text="Upload Excel Data", command=self.upload_and_clean_file, width=30, bg="#00a000", font=("Helvetica", 12))
         self.upload_button.pack(pady=15)
 
         self.value_entry_frame = tk.LabelFrame(self.left_frame, text="Search Criteria", padx=10, pady=10, font=("Helvetica", 14, "bold"))
-        self.value_entry_frame.pack(pady=15, fill=tk.BOTH, expand=True)
+        self.value_entry_frame.pack(pady=15, fill=tk.BOTH, expand=False)
 
         self.search_button = tk.Button(self.left_frame, text="Search", command=self.search_material, width=25, font=("Helvetica", 12))
         self.search_button.pack(pady=15)
@@ -84,18 +91,25 @@ class ExcelApp:
 
     def upload_and_clean_file(self):
         file_path = filedialog.askopenfilename(
-            title="Select an Excel File",
+            title="Select an Excel Data File",
             filetypes=(("Excel files", "*.xlsx *.xls"), ("All files", "*.*"))
         )
         if file_path:
-            try:
-                # Clean and load the Excel file
-                self.df = self.clean_excel_file(file_path)
-                self.columns = list(self.df.columns)
-                self.create_column_selection()
-                messagebox.showinfo("Success", f"Data cleaned and loaded from: {os.path.basename(file_path)}")
-            except Exception as e:
-                messagebox.showerror("Error", f"Failed to process the Excel file: {e}")
+            self.start_cleaning(file_path)
+
+    def start_cleaning(self, file_path):
+        # Create a new top-level window for the progress bar
+        self.progress_window = tk.Toplevel(self.root)
+        self.progress_window.title("Cleaning Data")
+        self.progress_window.geometry("300x100")
+
+        tk.Label(self.progress_window, text="Cleaning data, please wait...", font=("Helvetica", 12)).pack(pady=10)
+        self.progress_bar = ttk.Progressbar(self.progress_window, length=250, mode='indeterminate')
+        self.progress_bar.pack(pady=10)
+        self.progress_bar.start()
+
+        # Run the cleaning process in a separate thread
+        self.root.after(100, lambda: self.clean_excel_file(file_path))
 
     def clean_excel_file(self, file_path):
         try:
@@ -107,12 +121,23 @@ class ExcelApp:
             # Clean data
             df = self.clean_data(df)
 
-            # Save cleaned data
-            cleaned_file_path = file_path.rsplit('.', 1)[0] + "_cleaned.xlsx"
-            df.to_excel(cleaned_file_path, index=False, na_rep='')  # na_rep='' keeps cells empty
-            return df
+            # Save cleaned data to temp directory
+            self.cleaned_file_path = os.path.join(self.temp_dir, os.path.basename(file_path).rsplit('.', 1)[0] + "_cleaned.xlsx")
+            df.to_excel(self.cleaned_file_path, index=False, na_rep='')  # na_rep='' keeps cells empty
+            
+            self.df = df
+            self.columns = list(self.df.columns)
+            self.create_column_selection()
+
+            # Close the progress window
+            self.progress_bar.stop()
+            self.progress_window.destroy()
+            
+            self.update_selected_columns()
         except Exception as e:
-            raise Exception(f"Error cleaning Excel file: {e}")
+            messagebox.showerror("Error", f"Failed to process the Excel file: {e}")
+            self.progress_bar.stop()
+            self.progress_window.destroy()
 
     def clean_data(self, df):
         for column in df.columns:
@@ -200,11 +225,7 @@ class ExcelApp:
             self.create_entry_fields()
 
     def is_numeric_column(self, column):
-        try:
-            self.df[column].astype(float)
-            return True
-        except ValueError:
-            return False
+        return pd.api.types.is_numeric_dtype(self.df[column])
 
     def search_material(self):
         if self.df is not None:
@@ -255,7 +276,6 @@ class ExcelApp:
         else:
             self.results_text.insert(tk.END, "No results found.")
 
-
     def reset_search(self):
         for widget in self.value_entry_frame.winfo_children():
             widget.destroy()
@@ -266,8 +286,14 @@ class ExcelApp:
         self.results_text.delete("1.0", tk.END)
         self.update_selected_columns()
 
+    def on_closing(self):
+        # Clean up the temporary directory
+        if os.path.exists(self.temp_dir):
+            shutil.rmtree(self.temp_dir)
+        self.root.destroy()
 
 if __name__ == "__main__":
     root = tk.Tk()
     app = ExcelApp(root)
+    root.protocol("WM_DELETE_WINDOW", app.on_closing)
     root.mainloop()

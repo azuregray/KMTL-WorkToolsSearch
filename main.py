@@ -25,7 +25,7 @@ class ExcelApp:
         # Temporary directory setup
         self.temp_dir = tempfile.mkdtemp(prefix="KMTL_WorkTools_Search_")
         self.cleaned_file_path = ""
-
+        
         self.create_widgets()
 
     def create_widgets(self):
@@ -164,11 +164,11 @@ class ExcelApp:
                 self.column_vars[column] = var
 
     def create_entry_fields(self):
-        self.selected_columns = [col for col, var in self.column_vars.items() if var.get()]
+        self.selected_columns = [col for col,var in self.column_vars.items() if var.get()]
 
         for widget in self.value_entry_frame.winfo_children():
             widget.destroy()
-
+        
         self.entries = {}
         for column in self.selected_columns:
             if self.is_numeric_column(column):
@@ -316,9 +316,8 @@ class ExcelApp:
         self.update_selected_columns()
 
     def on_closing(self):
-        # Clean up the temporary directory
-        if os.path.exists(self.temp_dir):
-            shutil.rmtree(self.temp_dir)
+        # Destoying this session's temp directory
+        shutil.rmtree(self.temp_dir, ignore_errors=True)
         self.root.destroy()
 
 if __name__ == "__main__":

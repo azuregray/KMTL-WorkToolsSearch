@@ -30,10 +30,10 @@ python main.py
 - **How to run the package:**
 > Step 01: Please use our [Latest Release](https://github.com/azuregray/KMTL-WorkToolsSearch/releases/latest) App (.exe).
 
-> Step 02: Download and Run "Kennametal WorkTools Search App"
+> Step 02: Download and Run "Kennametal WorkToolsSearch"
 ---
 - **URL for the original repository is as below:**
 
-> https://github.com/azuregray/WorkTools-Data-Search-Model/
+> https://github.com/azuregray/KMTL-WorkToolsSearch/
 
 ---

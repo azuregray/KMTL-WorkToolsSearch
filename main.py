@@ -38,6 +38,8 @@ class ExcelApp:
         self.right_frame = tk.Frame(self.main_frame, width=int(self.root.winfo_screenwidth() * 0.3))
         self.right_frame.pack(side=tk.RIGHT, fill=tk.Y)
 
+        # registered_symbol = u"\u00AE"
+        # branding_text = "KENNAMETAL INC." + registered_symbol + " WorkTools Search"
         branding_text = "KENNAMETAL INC. WorkTools Search"
 
         title_label = tk.Label(self.left_frame, text=branding_text, font=("HelveticaNeueLT W1G 97 BlkCn", 30, "bold"), fg="#333333")
@@ -151,10 +153,6 @@ class ExcelApp:
         return value
 
     def update_selected_columns(self):
-        # Preserve existing entries and their values
-        existing_entries = {col: self.entries.get(col, None) for col in self.selected_columns}
-
-        # Clear previous filter UI components
         for widget in self.scrollable_frame.winfo_children():
             widget.destroy()
 
@@ -164,10 +162,6 @@ class ExcelApp:
                 checkbox = tk.Checkbutton(self.scrollable_frame, text=column, variable=var, command=self.create_entry_fields, font=("Helvetica", 12))
                 checkbox.pack(anchor=tk.W, pady=2)
                 self.column_vars[column] = var
-
-        # Restore existing entries
-        self.entries = existing_entries
-        self.create_entry_fields()
 
     def create_entry_fields(self):
         self.selected_columns = [col for col,var in self.column_vars.items() if var.get()]
@@ -196,12 +190,6 @@ class ExcelApp:
                 remove_button = tk.Button(frame, text="Remove", command=lambda col=column: self.remove_entry(col), font=("Helvetica", 10))
                 remove_button.pack(side=tk.LEFT, padx=5)
 
-                # Restore previous values if available
-                if column in self.search_values:
-                    from_val, to_val = self.search_values[column]
-                    from_entry.insert(0, from_val)
-                    to_entry.insert(0, to_val)
-
                 self.entries[column] = (from_entry, to_entry)
             else:
                 frame = tk.Frame(self.value_entry_frame)
@@ -218,10 +206,6 @@ class ExcelApp:
                 remove_button = tk.Button(frame, text="Remove", command=lambda col=column: self.remove_entry(col), font=("Helvetica", 10))
                 remove_button.pack(side=tk.LEFT, padx=5)
 
-                # Restore previous values if available
-                if column in self.search_values:
-                    dropdown.set(self.search_values[column])
-
                 self.entries[column] = dropdown
 
     def reset_value(self, column):
@@ -232,10 +216,6 @@ class ExcelApp:
         else:
             dropdown = self.entries[column]
             dropdown.set('')
-
-        # Remove column from search_values
-        if column in self.search_values:
-            del self.search_values[column]
 
     def remove_entry(self, column):
         if column in self.entries:
@@ -336,7 +316,7 @@ class ExcelApp:
         self.update_selected_columns()
 
     def on_closing(self):
-        # Destroying this session's temp directory
+        # Destoying this session's temp directory
         shutil.rmtree(self.temp_dir, ignore_errors=True)
         self.root.destroy()
 

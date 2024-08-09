@@ -9,6 +9,7 @@ class ExcelApp:
         self.root.title("KENNAMETAL INC. WorkTools Search")
         self.root.geometry("1000x600")
         self.root.resizable(True, True)
+        self.root.state('zoomed')
 
         try:
             self.root.wm_iconbitmap('logo.ico')
@@ -26,6 +27,7 @@ class ExcelApp:
         # Temporary directory setup
         self.temp_dir = tempfile.mkdtemp(prefix="KMTL_WorkToolsSearch_")
         self.cleaned_file_path = ""
+        self.appended_results = pd.DataFrame()  # DataFrame to hold appended results
         
         self.create_widgets()
 
@@ -55,6 +57,9 @@ class ExcelApp:
 
         self.search_button = tk.Button(self.left_frame, text="Save and Search", command=self.search_material, width=25, font=("Helvetica", 12))
         self.search_button.pack(pady=15)
+
+        self.append_button = tk.Button(self.left_frame, text="Append Results", command=self.append_results, width=25, font=("Helvetica", 12))
+        self.append_button.pack(pady=15)
 
         self.reset_button = tk.Button(self.left_frame, text="Reset", command=self.reset_search, width=25, bg="#d32f2f", font=("Helvetica", 12))
         self.reset_button.pack(pady=15)
@@ -199,13 +204,12 @@ class ExcelApp:
         
         self.entries = {}
         for column in self.selected_columns:
+            frame = tk.Frame(self.value_entry_frame)
+            frame.pack(anchor=tk.W, fill=tk.X, pady=2)
+
+            label = tk.Label(frame, text=column, font=("Helvetica", 12))
+            label.pack(side=tk.LEFT)
             if self.is_numeric_column(column):
-                frame = tk.Frame(self.value_entry_frame)
-                frame.pack(anchor=tk.W, fill=tk.X, pady=2)
-
-                label = tk.Label(frame, text=column, font=("Helvetica", 12))
-                label.pack(side=tk.LEFT)
-
                 from_entry = tk.Entry(frame, font=("Helvetica", 12), bd=2, relief="solid", width=10)
                 from_entry.pack(side=tk.LEFT, padx=5)
 
@@ -226,15 +230,9 @@ class ExcelApp:
 
                 self.entries[column] = (from_entry, to_entry)
             else:
-                frame = tk.Frame(self.value_entry_frame)
-                frame.pack(anchor=tk.W, fill=tk.X, pady=2)
-
-                label = tk.Label(frame, text=column, font=("Helvetica", 12))
-                label.pack(side=tk.LEFT)
-
                 dropdown_values = list(self.df[column].dropna().unique())
-                dropdown = tk.StringVar()
-                dropdown_menu = tk.OptionMenu(frame, dropdown, *dropdown_values)
+                dropdown_var = tk.StringVar(value='')
+                dropdown_menu = tk.OptionMenu(frame, dropdown_var, *dropdown_values)
                 dropdown_menu.pack(side=tk.LEFT, padx=5)
 
                 remove_button = tk.Button(frame, text="Remove", command=lambda col=column: self.remove_entry(col), font=("Helvetica", 10))
@@ -242,9 +240,9 @@ class ExcelApp:
 
                 # Restore previous values if available
                 if column in self.search_values:
-                    dropdown.set(self.search_values[column])
+                    dropdown_var.set(self.search_values[column])
 
-                self.entries[column] = dropdown
+                self.entries[column] = dropdown_var
 
     def reset_value(self, column):
         if self.is_numeric_column(column):
@@ -329,6 +327,49 @@ class ExcelApp:
         else:
             self.results_text.insert(tk.END, "No results found.")
 
+    def append_results(self):
+        if self.search_results is not None and not self.search_results.empty:
+            if self.appended_results.empty:
+                self.appended_results = self.search_results.copy()
+            else:
+                self.appended_results = pd.concat([self.appended_results, self.search_results]).drop_duplicates()
+
+            self.display_appended_results()
+        else:
+            messagebox.showinfo("Info", "No results to append. Please perform a search first.")
+
+    def display_appended_results(self):
+        appended_window = tk.Toplevel(self.root)
+        appended_window.title("Appended Results")
+        appended_window.geometry("800x600")
+
+        appended_text = tk.Text(appended_window, wrap=tk.WORD, font=("Helvetica", 12))
+        appended_text.pack(expand=True, fill=tk.BOTH)
+
+        if not self.appended_results.empty:
+            num_rows = len(self.appended_results)
+            material_numbers = self.appended_results.iloc[:, 1].tolist()  # Assuming material numbers are in the second column
+            appended_text.insert(tk.END, f"Total rows appended: {num_rows}\n\nMaterials:\n")
+            for i, number in enumerate(material_numbers):
+                row_data = self.appended_results.iloc[i].tolist()
+                view_button = tk.Button(appended_window, text=f"View {number}", command=lambda row=row_data: self.view_row(row))
+                appended_text.insert(tk.END, f"{number}\n")
+                appended_text.window_create(tk.END, window=view_button)
+                appended_text.insert(tk.END, "\n")
+        else:
+            appended_text.insert(tk.END, "No appended results found.")
+
+    def reset_search(self):
+        for widget in self.value_entry_frame.winfo_children():
+            widget.destroy()
+        self.entries = {}
+        self.selected_columns = []
+        self.search_values = {}
+        self.search_results = None
+        self.appended_results = pd.DataFrame()  # Reset appended results
+        self.results_text.delete("1.0", tk.END)
+        self.update_selected_columns()
+
     def view_row(self, row_data):
         details_window = tk.Toplevel(self.root)
         details_window.title("Row Details")
@@ -349,16 +390,6 @@ class ExcelApp:
         
         formatted_data = "\n".join([f"{key} = {value}" for key,value in row_dict_processed.items()])
         details_text.insert(tk.END, formatted_data)
-
-    def reset_search(self):
-        for widget in self.value_entry_frame.winfo_children():
-            widget.destroy()
-        self.entries = {}
-        self.selected_columns = []
-        self.search_values = {}
-        self.search_results = None
-        self.results_text.delete("1.0", tk.END)
-        self.update_selected_columns()
 
     def on_closing(self):
         # Destroying this session's temp directory

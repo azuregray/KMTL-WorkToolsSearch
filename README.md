@@ -2,7 +2,7 @@
 
 ### KENNAMETAL SHARED SERVICES PVT. LTD.
 
-#### Description :: *A well designed and responsive ML integrated search interface for searching through internal database of achieved projects for guiding employees across Kennametal for efficient worktime.*
+#### Description :: *An algorithmically enhanced hard-coded search software for searching through internal database of achieved projects for guiding employees across Kennametal aiming efficient worktime.*
 
 > Project received by my team at **Department of AI & ML - Sri Krishna Insititute of Technology**
 

@@ -24,7 +24,7 @@ class ExcelApp:
         self.primary_key = None
 
         # Temporary directory setup
-        self.temp_dir = tempfile.mkdtemp(prefix="KMTL_WorkTools_Search_")
+        self.temp_dir = tempfile.mkdtemp(prefix="KMTL_WorkToolsSearch_")
         self.cleaned_file_path = ""
         
         self.create_widgets()

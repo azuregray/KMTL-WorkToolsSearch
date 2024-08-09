@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox, ttk
+from tkinter import filedialog, messagebox, ttk, simpledialog
 import pandas as pd
 import os, re, tempfile, shutil
 
@@ -21,11 +21,12 @@ class ExcelApp:
         self.selected_columns = []
         self.search_values = {}
         self.search_results = None
+        self.primary_key = None
 
         # Temporary directory setup
         self.temp_dir = tempfile.mkdtemp(prefix="KMTL_WorkTools_Search_")
         self.cleaned_file_path = ""
-
+        
         self.create_widgets()
 
     def create_widgets(self):
@@ -38,8 +39,6 @@ class ExcelApp:
         self.right_frame = tk.Frame(self.main_frame, width=int(self.root.winfo_screenwidth() * 0.3))
         self.right_frame.pack(side=tk.RIGHT, fill=tk.Y)
 
-        # registered_symbol = u"\u00AE"
-        # branding_text = "KENNAMETAL INC." + registered_symbol + " WorkTools Search"
         branding_text = "KENNAMETAL INC. WorkTools Search"
 
         title_label = tk.Label(self.left_frame, text=branding_text, font=("HelveticaNeueLT W1G 97 BlkCn", 30, "bold"), fg="#333333")
@@ -48,10 +47,13 @@ class ExcelApp:
         self.upload_button = tk.Button(self.left_frame, text="Upload Excel Data", command=self.upload_and_clean_file, width=30, bg="#00a000", font=("Helvetica", 12))
         self.upload_button.pack(pady=15)
 
+        self.primary_key_button = tk.Button(self.left_frame, text="Select Primary Key", command=self.select_primary_key, width=30, font=("Helvetica", 12))
+        self.primary_key_button.pack(pady=15)
+
         self.value_entry_frame = tk.LabelFrame(self.left_frame, text="Search Criteria", padx=10, pady=10, font=("Helvetica", 14, "bold"))
         self.value_entry_frame.pack(pady=15, fill=tk.BOTH, expand=False)
 
-        self.search_button = tk.Button(self.left_frame, text="Search", command=self.search_material, width=25, font=("Helvetica", 12))
+        self.search_button = tk.Button(self.left_frame, text="Save and Search", command=self.search_material, width=25, font=("Helvetica", 12))
         self.search_button.pack(pady=15)
 
         self.reset_button = tk.Button(self.left_frame, text="Reset", command=self.reset_search, width=25, bg="#d32f2f", font=("Helvetica", 12))
@@ -152,7 +154,29 @@ class ExcelApp:
             return value
         return value
 
+    def select_primary_key(self):
+        if self.df is not None:
+            unique_columns = [col for col in self.columns if self.df[col].is_unique and self.df[col].notna().all()]
+
+            if not unique_columns:
+                messagebox.showinfo("Info", "No columns meet the criteria for a primary key.")
+                return
+
+            selected_column = simpledialog.askstring("Select Primary Key", "Choose a primary key column:\n" + "\n".join(unique_columns))
+
+            if selected_column in unique_columns:
+                self.primary_key = selected_column
+                messagebox.showinfo("Info", f"Primary key selected: {self.primary_key}")
+            else:
+                messagebox.showwarning("Warning", "Selected column is not a valid primary key.")
+        else:
+            messagebox.showinfo("Info", "No data available. Please upload a file first.")
+
     def update_selected_columns(self):
+        # Preserve existing entries and their values
+        existing_entries = {col: self.entries.get(col, None) for col in self.selected_columns}
+
+        # Clear previous filter UI components
         for widget in self.scrollable_frame.winfo_children():
             widget.destroy()
 
@@ -163,12 +187,16 @@ class ExcelApp:
                 checkbox.pack(anchor=tk.W, pady=2)
                 self.column_vars[column] = var
 
+        # Restore existing entries
+        self.entries = existing_entries
+        self.create_entry_fields()
+
     def create_entry_fields(self):
-        self.selected_columns = [col for col, var in self.column_vars.items() if var.get()]
+        self.selected_columns = [col for col,var in self.column_vars.items() if var.get()]
 
         for widget in self.value_entry_frame.winfo_children():
             widget.destroy()
-
+        
         self.entries = {}
         for column in self.selected_columns:
             if self.is_numeric_column(column):
@@ -190,6 +218,12 @@ class ExcelApp:
                 remove_button = tk.Button(frame, text="Remove", command=lambda col=column: self.remove_entry(col), font=("Helvetica", 10))
                 remove_button.pack(side=tk.LEFT, padx=5)
 
+                # Restore previous values if available
+                if column in self.search_values:
+                    from_val, to_val = self.search_values[column]
+                    from_entry.insert(0, from_val)
+                    to_entry.insert(0, to_val)
+
                 self.entries[column] = (from_entry, to_entry)
             else:
                 frame = tk.Frame(self.value_entry_frame)
@@ -206,6 +240,10 @@ class ExcelApp:
                 remove_button = tk.Button(frame, text="Remove", command=lambda col=column: self.remove_entry(col), font=("Helvetica", 10))
                 remove_button.pack(side=tk.LEFT, padx=5)
 
+                # Restore previous values if available
+                if column in self.search_values:
+                    dropdown.set(self.search_values[column])
+
                 self.entries[column] = dropdown
 
     def reset_value(self, column):
@@ -216,6 +254,10 @@ class ExcelApp:
         else:
             dropdown = self.entries[column]
             dropdown.set('')
+
+        # Remove column from search_values
+        if column in self.search_values:
+            del self.search_values[column]
 
     def remove_entry(self, column):
         if column in self.entries:
@@ -259,6 +301,9 @@ class ExcelApp:
                             result_df = result_df[(result_df[column].astype(float) >= from_value) & (result_df[column].astype(float) <= to_value)]
                         else:
                             result_df = result_df[result_df[column] == value]
+
+                    if self.primary_key:
+                        result_df = result_df.drop_duplicates(subset=[self.primary_key])
 
                     self.search_results = result_df
                     self.display_results()
@@ -316,9 +361,8 @@ class ExcelApp:
         self.update_selected_columns()
 
     def on_closing(self):
-        # Clean up the temporary directory
-        if os.path.exists(self.temp_dir):
-            shutil.rmtree(self.temp_dir)
+        # Destroying this session's temp directory
+        shutil.rmtree(self.temp_dir, ignore_errors=True)
         self.root.destroy()
 
 if __name__ == "__main__":

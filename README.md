@@ -3,22 +3,22 @@
 ![KMTL Official Branding](https://raw.githubusercontent.com/azuregray/KMTL-WorkToolsSearch/main/Assets/BrandLogo-KMTL.jpeg)
 ## **`KENNAMETAL INC.`**
 
-#### `Description` &ensp; *An algorithmically enhanced hard-coded search software for searching through internal database of achieved projects for guiding employees across Kennametal aiming efficient worktime.*
+#### `Description` &ensp; An algorithmically enhanced hard-coded search software for searching through internal database of achieved projects for guiding employees across Kennametal aiming efficient worktime.
 
 > **Department of AI & ML - Sri Krishna Insititute of Technology - `6th SEMESTER 2021 Batch`**
 
 > **`Unity is Strength`** Leading such a team is an opportunity not to miss:
 
-> **D A R S H A N &ensp; S &ensp; `PROJECT MANAGER & TEAM LEAD` >> [**`GitHub`**](https://github.com/azuregray/) | [**`LinkedIn`**](https://linkedin.com/in/arcticblue)**
+> **D A R S H A N &ensp; S &ensp; `PROJECT MANAGER & TEAM LEAD` >> [**`GITHUB`**](https://github.com/azuregray/) | [**`LINKEDIN`**](https://linkedin.com/in/arcticblue)**
 
-> **V E N U &ensp; G O P A L &ensp; S &ensp; R &ensp; `PRIMARY DEVELOPER` >> [**`GitHub`**](https://github.com/srvenu) | [**`LinkedIn`**](https://www.linkedin.com/in/venu-s-raj)**
+> **V E N U &ensp; G O P A L &ensp; S &ensp; R &ensp; `PRIMARY DEVELOPER` >> [**`GITHUB`**](https://github.com/srvenu) | [**`LINKEDIN`**](https://www.linkedin.com/in/venu-s-raj)**
 
-> **D A R S H A N &ensp; S A D A S H I V A  &ensp; `INTERFACE DESIGNER & SECONDARY DEVELOPER` >> [**`GitHub`**](https://github.com/darshansadashiva) | [**`LinkedIn`**](http://linkedin.com/in/darshansadashiva)**
+> **D A R S H A N &ensp; S A D A S H I V A  &ensp; `INTERFACE DESIGNER & SECONDARY DEVELOPER` >> [**`GITHUB`**](https://github.com/darshansadashiva) | [**`LINKEDIN`**](http://linkedin.com/in/darshansadashiva)**
 
 ---
 ## **`INSTALLATION`**
 - **How to use the App**
-> Step 01: Please use our [Latest Release Page](https://github.com/azuregray/KMTL-WorkToolsSearch/releases/latest) and find ***Kennametal.WorkToolsSearch.exe***
+> Step 01: Please use our [**`LATEST RELEASE PAGE`**](https://github.com/azuregray/KMTL-WorkToolsSearch/releases/latest) and find **Kennametal.WorkToolsSearch.exe**
 
 > Step 02: Run **Kennametal WorkToolsSearch** in your Downloads folder.
 
@@ -27,7 +27,7 @@
 
 > Take the help of `requirements.txt` in the root folder.
 
-Assuming you are inside the cloned folder, just run this in Terminal *`Interpreter: PowerShell`*:
+Assuming you are inside the cloned folder, just run this in Terminal `Interpreter: PowerShell`:
 ```
 python -m pip install -r requirements.txt; python ./main.py
 ```

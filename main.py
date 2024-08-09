@@ -340,14 +340,14 @@ class ExcelApp:
         details_text = tk.Text(details_window, wrap=tk.WORD, font=("Helvetica", 12))
         details_text.pack(expand=True, fill=tk.BOTH)
 
-        # Get column names from the DataFrame's columns
         column_names = self.df.columns.tolist()
-        # Create a dictionary from row data
         row_dict = dict(zip(column_names, row_data))
+        row_dict_processed = {}
+        for key,value in row_dict.items():
+            if not pd.isna(value):
+                row_dict_processed[key] = value
         
-        # Format row data as "column_name = value"
-        formatted_data = "\n".join([f"{col} = {row_dict[col]}" for col in column_names])
-        
+        formatted_data = "\n".join([f"{key} = {value}" for key,value in row_dict_processed.items()])
         details_text.insert(tk.END, formatted_data)
 
     def reset_search(self):

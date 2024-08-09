@@ -37,7 +37,7 @@ python -m pip install -r requirements.txt; python ./main.py
 ## **For respected Contributors:**
 > Please refer [**`OFFICIAL CONTRIBUTION GUIDE`**](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project)
 ---
-- **URL FOR THE `ORIGINAL REPOSITORY` IS AS FOLLOWS:**
+- **LINK TO `THE ORIGINAL REPOSITORY`**
 
 > **https://github.com/azuregray/KMTL-WorkToolsSearch/**
 

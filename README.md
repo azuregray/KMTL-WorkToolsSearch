@@ -2,7 +2,7 @@
 
 ### KENNAMETAL SHARED SERVICES PVT. LTD.
 
-#### Description :: *A well designed and responsive ML integrated search interface for searching through internal database of achieved projects for guiding employees across Kennametal for efficient worktime.*
+#### Description :: *An algorithmically enhanced hard-coded search software for searching through internal database of achieved projects for guiding employees across Kennametal aiming efficient worktime.*
 
 > Project received by my team at **Department of AI & ML - Sri Krishna Insititute of Technology**
 
@@ -30,10 +30,10 @@ python main.py
 - **How to run the package:**
 > Step 01: Please use our [Latest Release](https://github.com/azuregray/KMTL-WorkToolsSearch/releases/latest) App (.exe).
 
-> Step 02: Download and Run "Kennametal WorkTools Search App"
+> Step 02: Download and Run "Kennametal WorkToolsSearch"
 ---
 - **URL for the original repository is as below:**
 
-> https://github.com/azuregray/WorkTools-Data-Search-Model/
+> https://github.com/azuregray/KMTL-WorkToolsSearch/
 
 ---

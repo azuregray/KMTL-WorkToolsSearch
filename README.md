@@ -5,6 +5,8 @@
 
 #### `Description` &ensp; An algorithmically enhanced hard-coded search software for searching through internal database of achieved projects for guiding employees across Kennametal aiming efficient worktime.
 
+> **Project Duration: `April - August 2024 (6 Months)`**
+
 > **Department of AI & ML - Sri Krishna Insititute of Technology - `6th SEMESTER 2021 Batch`**
 
 > **`Unity is Strength`** Leading such a team is an opportunity not to miss:

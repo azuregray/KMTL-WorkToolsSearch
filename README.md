@@ -1,6 +1,6 @@
 # **W O R K T O O L S &emsp; S E A R C H &emsp; A P P**
 
-### KENNAMETAL SHARED SERVICES PVT. LTD.
+### KENNAMETAL INC.
 
 #### Description :: *An algorithmically enhanced hard-coded search software for searching through internal database of achieved projects for guiding employees across Kennametal aiming efficient worktime.*
 
@@ -21,8 +21,7 @@
 
 Assuming you are inside the cloned folder, just run this in Terminal *(Interpreter: PowerShell)*:
 ```
-python -m pip install -r requirements.txt
-python main.py
+python -m pip install -r requirements.txt; python ./main.py
 ```
 
 > Please note that this whole project is currently intended to run on Windows OS only.
@@ -30,7 +29,7 @@ python main.py
 - **How to run the package:**
 > Step 01: Please use our [Latest Release](https://github.com/azuregray/KMTL-WorkToolsSearch/releases/latest) App (.exe).
 
-> Step 02: Download and Run "Kennametal WorkToolsSearch"
+> Step 02: Download "**Kennametal.WorkToolsSearch.exe**" and Run the same.
 ---
 - **URL for the original repository is as below:**
 

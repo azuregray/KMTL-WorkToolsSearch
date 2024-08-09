@@ -35,7 +35,7 @@ python -m pip install -r requirements.txt; python ./main.py
 > Please note that this App is currently intended to run on `WINDOWS` OS only.
 ---
 ## **For respected Contributors:**
-> Please refer [**`OFFICIAL CONTRIBUTION GUIDE`**](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project).
+> Please refer [**`OFFICIAL CONTRIBUTION GUIDE`**](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project)
 ---
 - **URL FOR THE `ORIGINAL REPOSITORY` IS AS FOLLOWS:**
 

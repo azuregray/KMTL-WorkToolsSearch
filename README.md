@@ -1,6 +1,6 @@
 # **W O R K T O O L S &emsp; S E A R C H &emsp; A P P**
 
-![KMTL Official Branding](https://raw.githubusercontent.com/azuregray/KMTL-WorkToolsSearch/main/assets/BrandLogo-KMTL.jpeg)
+![KMTL Official Branding](https://raw.githubusercontent.com/azuregray/KMTL-WorkToolsSearch/main/Assets/BrandLogo-KMTL.jpeg)
 ## **`KENNAMETAL INC.`**
 
 #### `Description` &ensp; *An algorithmically enhanced hard-coded search software for searching through internal database of achieved projects for guiding employees across Kennametal aiming efficient worktime.*

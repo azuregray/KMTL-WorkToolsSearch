@@ -18,7 +18,7 @@
 ---
 ## **`INSTALLATION`**
 - **How to use the App**
-> Step 01: Please use our [Latest Release Page](https://github.com/azuregray/KMTL-WorkToolsSearch/releases/latest) and find ***Kennametal.WorkToolsSearch.exe***.
+> Step 01: Please use our [Latest Release Page](https://github.com/azuregray/KMTL-WorkToolsSearch/releases/latest) and find ***Kennametal.WorkToolsSearch.exe***
 
 > Step 02: Run **Kennametal WorkToolsSearch** in your Downloads folder.
 

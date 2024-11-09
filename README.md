@@ -9,8 +9,6 @@
 
 > **Department of AI & ML - Sri Krishna Insititute of Technology - `6th SEMESTER 2021 Batch`**
 
-> **`Unity is Strength`** Leading such a team is an opportunity not to miss:
-
 > **D A R S H A N &ensp; S &ensp; `PROJECT MANAGER & TEAM LEAD` >> [**`GITHUB`**](https://github.com/azuregray/) | [**`LINKEDIN`**](https://linkedin.com/in/arcticblue)**
 
 > **V E N U &ensp; G O P A L &ensp; S &ensp; R &ensp; `PRIMARY DEVELOPER` >> [**`GITHUB`**](https://github.com/srvenu) | [**`LINKEDIN`**](https://www.linkedin.com/in/venu-s-raj)**
